@@ -1,0 +1,148 @@
+# this is the name of this skillet, should be unique within a given repository
+name: CN-Series-Deployer
+
+# label should be a human readable label that conveys what this skillet will do
+label: Skillet to configure Panroama and deploy CN-Series in k8s cluster.
+
+# description is a longer more informative version of a label
+description: This skillet can be used deploy CN-Series in k8s cluster.
+
+# type instructs Panhandler how to consume this skillet
+type: python3
+
+# extends allows you to include other skillets along with this one
+extends:
+
+# labels allow extensible configuration options per skillet type. For example, lables can be used to
+# group multiple skillets of the same type (pan-os skillets labeled as version: 9.0 for example)
+labels:
+  collection:
+    - Datacenter Virtualization
+    - Deploy
+    - CN-Series
+
+
+# Variables will be presented to the user via the Panhandler GUI. These values will then be passed to
+# to the python script
+variables:
+  - name: pn_ip
+    description: "Panorama IP Address"
+    default: 192.168.55.5
+    type_hint: text
+  - name: pn_user
+    description: "Panorama Username"
+    default: admin
+    type_hint: text
+  - name: pn_pass
+    description: "Panorama Password"
+    default: ChangeMePlease
+    type_hint: password
+  - name: k8s_ip
+    description: "Kubernetes cluster API IP"
+    default: 192.168.55.144
+    type_hint: text
+  - name: k8s_type
+    description: "Kubernetes cluster type."
+    default: native
+    type_hint: dropdown
+    dd_list:
+      - key: Native
+        value: native
+      - key: OpenShift
+        value: openshift
+  - name: ctl_ip
+    description: "Kubectl node IP address. (Linux machine that can run kubectl or oc against the k8s master.)"
+    default: 192.168.55.144
+    type_hint: text
+  - name: k8s_user
+    description: "Kubectl node Username"
+    default: root
+    type_hint: test
+  - name: k8s_pass
+    description: "Kubectl node Password"
+    default: ChangeMePlease
+    type_hint: password
+  - name: k8s_port
+    description: "Kubernetes master API port"
+    default: 6443
+    type_hint: text
+  - name: k8s_mode
+    description: "CN-Series deployment mode (Lite: single MP deployment for lab only. Full: Full CN-Series deployment)"
+    default: Full
+    type_hint: dropdown
+    dd_list:
+      - key: Full
+        value: full
+      - key: Lite
+        value: lite
+  - name: k8s_name
+    description: "Kubernetes Cluster name"
+    default: CN-K8S-Cluster
+    type_hint: text
+  - name: pn_dg
+    description: "Panorama Device Group (it will be created if not found)"
+    default: CN-DG
+    type_hint: text
+  - name: pn_tmpl
+    description: "Panorama Template Stack (it will be created if not found)"
+    default: CN-T-Stack
+    type_hint: text
+  - name: pn_cg
+    description: "Panorama Log Collector Group (it will be created if not found)"
+    default: CN-CG
+    type_hint: text
+  - name: auth_code
+    description: "CN-Series license Auth Code"
+    default: ChangeMePlease
+    type_hint: text
+  - name: cn_bnd
+    description: "CN-Series License bundle type (CN-X-BASIC, CN-X-BND1, or CN-X-BND2)"
+    default: CN-X-BND2
+    type_hint: dropdown
+    dd_list:
+      - key: CN-X-BASIC
+        value: CN-X-BASIC
+      - key: CN-X-BND1
+        value: CN-X-BND1
+      - key: CN-X-BND2
+        value: CN-X-BND2
+  - name: tokens
+    description: "Number of CN-Series license token to activate."
+    default: 1
+    type_hint: text
+  - name: cn_mgmt_image
+    description: "CN-Series MP (CN-MGMT) Image registry path"
+    default: paloaltonetworks/panos_cn_mgmt
+    type_hint: text
+  - name: cn_init_image
+    description: "CN-Series MP init Image registry path"
+    default: paloaltonetworks/pan_cn_mgmt_init
+    type_hint: text
+  - name: cn_ngfw_image
+    description: "CN-Series DP (CN-NGFW) Image registry path"
+    default: paloaltonetworks/panos_cn_ngfw
+    type_hint: text
+  - name: cn_cni_image
+    description: "CN-Series CNI Image registry path"
+    default: paloaltonetworks/pan_cni
+    type_hint: text
+  - name: cn_pin_value
+    description: "CN-Series auto registration PIN for Thermite certificate retrieval"
+    type_hint: text
+  - name: cn_pin_id
+    description: "CN-Series auto registration PIN ID for Thermite certificate retrieval"
+    type_hint: text
+  - name: pv_type
+    description: "CN-MGMT Persistent Volumes type: Manual, Local, or Dynamic. Ignore it for OpenShift"
+    type_hint: dropdown
+    dd_list:
+      - key: Manual
+        value: manual
+      - key: Local
+        value: local
+      - key: Dynamic
+        value: dynamic
+
+snippets:
+  - name: script
+    file: CN-Series-Deployer.py
